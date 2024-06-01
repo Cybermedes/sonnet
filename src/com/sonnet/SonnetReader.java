@@ -21,6 +21,7 @@ public class SonnetReader extends BufferedReader {
 
     // Read and throw away the blank lines and sonnet numbers
     private String skipSonnetHeader() throws IOException {
+
         // Sonnets starts with Roman numbers and some blank lines
         String line = readLine();
         while (line.isBlank()) {
@@ -41,6 +42,7 @@ public class SonnetReader extends BufferedReader {
 
     // Read all the sonnet lines, if a blank line is met, then it has been fully read
     public Sonnet readNextSonnet() throws IOException {
+
         String line = skipSonnetHeader();
         if (line == null) {
             return null;
@@ -52,6 +54,5 @@ public class SonnetReader extends BufferedReader {
             }
             return sonnet;
         }
-
     }
 }
