@@ -10,7 +10,7 @@ import java.util.zip.GZIPOutputStream;
 public class Sonnet {
 
     // Store the sonnet lines in a list
-    private List<String> lines = new ArrayList<>();
+    private final List<String> lines = new ArrayList<>();
 
     public void add(String line) {
         lines.add(line);

@@ -16,6 +16,7 @@ import java.util.List;
 public class Main {
 
     private static List<Sonnet> sonnets;
+    private static final Path sonnetsFile = Path.of("sonnets.bin");
 
     public static void main(String[] args) {
 
@@ -28,11 +29,14 @@ public class Main {
             HttpResponse<InputStream> response = client.send(request,
                     HttpResponse.BodyHandlers.ofInputStream());
 
-            InputStream inputStream = response.body();
-            readFileContent(inputStream);
-            inputStream.close();
+            try (InputStream inputStream = response.body()) {
+                readFileContent(inputStream);
+            }
 
             writeAllTheSonnets();
+
+            var sfr = new SonnetFileReader();
+            sfr.readOneSonnetFromFile(sonnetsFile);
 
         } catch (IOException | InterruptedException e) {
             System.err.format("%s%n", e);
@@ -46,15 +50,14 @@ public class Main {
         int start = 30;
         sonnets = new ArrayList<>();
 
-        var reader = new SonnetReader(inputStream);
-        reader.skipLines(start);
-        var sonnet = reader.readNextSonnet();
-        while (sonnet != null) {
-            sonnets.add(sonnet);
-            sonnet = reader.readNextSonnet();
+        try (var reader = new SonnetReader(inputStream)) {
+            reader.skipLines(start);
+            var sonnet = reader.readNextSonnet();
+            while (sonnet != null) {
+                sonnets.add(sonnet);
+                sonnet = reader.readNextSonnet();
+            }
         }
-        reader.close();
-
         System.out.println("Number of sonnets = " + sonnets.size());
     }
 
@@ -62,8 +65,6 @@ public class Main {
     private static void writeAllTheSonnets() throws IOException {
 
         int numberOfSonnets = sonnets.size();
-        Path sonnetsFile = Path.of("sonnets.bin");
-
         if (!Files.exists(sonnetsFile)) {
             Files.createFile(sonnetsFile);
         }
