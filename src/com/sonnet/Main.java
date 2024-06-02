@@ -62,7 +62,11 @@ public class Main {
     private static void writeAllTheSonnets() throws IOException {
 
         int numberOfSonnets = sonnets.size();
-        Path sonnetsFile = Path.of("lib/sonnets.bin");
+        Path sonnetsFile = Path.of("sonnets.bin");
+
+        if (!Files.exists(sonnetsFile)) {
+            Files.createFile(sonnetsFile);
+        }
 
         try (var sonnetFile = Files.newOutputStream(sonnetsFile);
              var dos = new DataOutputStream(sonnetFile)) {
